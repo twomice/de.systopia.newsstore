@@ -19,7 +19,7 @@
   <field>
     <name>uri</name>
     <type>varchar</type>
-    <length>1024</length>
+    <length>512</length>
     <required>true</required>
     <comment>Unique URI for this news item. Typically a link to a web page.</comment>
     <add>4.6</add>
@@ -60,11 +60,5 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-
-  <index>
-    <name>uri</name>
-    <fieldName>uri</fieldName>
-    <unique>true</unique>
-  </index>
 
 </table>

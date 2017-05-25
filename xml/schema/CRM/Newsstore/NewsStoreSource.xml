@@ -66,6 +66,7 @@
     <length>20</length>
     <required>true</required>
     <comment>How many days should items be kept for?</comment>
+    <default>off</default>
     <add>4.6</add>
   </field>
 
