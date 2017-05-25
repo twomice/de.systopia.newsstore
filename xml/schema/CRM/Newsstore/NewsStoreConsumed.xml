@@ -4,7 +4,7 @@
   <base>CRM/Newsstore</base>
   <class>NewsStoreConsumed</class>
   <name>civicrm_newsstoreconsumed</name>
-  <comment>Maps between NewsSource and NewsStoreItem recording which items have been consumed by which source.</comment>
+  <comment>Maps between NewsStoreSource and NewsStoreItem recording which items have been consumed by which source.</comment>
   <add>4.6</add>
   <log>true</log>
 
@@ -18,10 +18,10 @@
   </field>
 
   <field>
-    <name>newssource_id</name>
+    <name>newsstoresource_id</name>
     <type>int unsigned</type>
     <required>true</required>
-    <comment>Foreign key identifying a NewsSource</comment>
+    <comment>Foreign key identifying a NewsStoreSource</comment>
     <add>4.6</add>
   </field>
 
@@ -38,7 +38,7 @@
     <type>boolean</type>
     <required>true</required>
     <default>0</default>
-    <comment>True means the NewsSource has consumed the NewsStoreItem.</comment>
+    <comment>True means the NewsStoreSource has consumed the NewsStoreItem.</comment>
     <add>4.6</add>
   </field>
 
@@ -48,8 +48,8 @@
   </primaryKey>
 
   <foreignKey>
-    <name>newssource_id</name>
-    <table>civicrm_newssource</table>
+    <name>newsstoresource_id</name>
+    <table>civicrm_newsstoresource</table>
     <key>id</key>
     <add>4.6</add>
     <onDelete>CASCADE</onDelete>
@@ -66,7 +66,7 @@
   <!-- there should only ever be one mapping between a source and an item. -->
   <index>
     <name>sourceitem</name>
-    <fieldName>newssource_id</fieldName>
+    <fieldName>newsstoresource_id</fieldName>
     <fieldName>newsstoreitem_id</fieldName>
     <unique>true</unique>
   </index>

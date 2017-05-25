@@ -4,7 +4,7 @@
   <base>CRM/Newsstore</base>
   <class>NewsStoreItem</class>
   <name>civicrm_newsstoreitem</name>
-  <comment>Represents a single item fetched by a NewsSource, part of the NewsStore extension.</comment>
+  <comment>Represents a single item fetched by a NewsStoreSource, part of the NewsStore extension.</comment>
   <add>4.6</add>
   <log>true</log>
 

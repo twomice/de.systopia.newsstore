@@ -4,8 +4,8 @@
 return array (
   0 => 
   array (
-    'name' => 'NewsSource',
-    'class' => 'CRM_Newsstore_DAO_NewsSource',
-    'table' => 'civicrm_newssource',
+    'name' => 'NewsStoreSource',
+    'class' => 'CRM_Newsstore_DAO_NewsStoreSource',
+    'table' => 'civicrm_newsstoresource',
   ),
 );

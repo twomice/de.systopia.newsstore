@@ -2,8 +2,8 @@
 
 <table>
   <base>CRM/Newsstore</base>
-  <class>NewsSource</class>
-  <name>civicrm_newssource</name>
+  <class>NewsStoreSource</class>
+  <name>civicrm_newsstoresource</name>
   <comment>Manages a particular NewsStore, e.g. a particular RSS feed. Part of the NewsStore extension.</comment>
   <add>4.6</add>
   <log>true</log>
@@ -12,7 +12,7 @@
     <name>id</name>
     <type>int unsigned</type>
     <required>true</required>
-    <comment>Unique NewsSource ID</comment>
+    <comment>Unique NewsStoreSource ID</comment>
     <add>4.6</add>
   </field>
 
@@ -21,7 +21,7 @@
     <type>varchar</type>
     <length>255</length>
     <required>true</required>
-    <comment>Human name to identify this NewsSource used in administrative interface.</comment>
+    <comment>Human name to identify this NewsStoreSource used in administrative interface.</comment>
     <add>4.6</add>
   </field>
 

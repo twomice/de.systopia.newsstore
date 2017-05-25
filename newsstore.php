@@ -143,8 +143,18 @@ function newsstore_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 function newsstore_civicrm_entityTypes(&$entityTypes) {
   $x=1;
   $entityTypes[] = [
-    'name' => 'NewsSource',
-    'class' => 'CRM_Newsstore_DAO_NewsSource',
-    'table' => 'civicrm_newssource',
+    'name' => 'NewsStoreSource',
+    'class' => 'CRM_Newsstore_DAO_NewsStoreSource',
+    'table' => 'civicrm_newsstoresource',
+  ];
+  $entityTypes[] = [
+    'name' => 'NewsStoreItem',
+    'class' => 'CRM_Newsstore_DAO_NewsStoreItem',
+    'table' => 'civicrm_newsstoreitem',
+  ];
+  $entityTypes[] = [
+    'name' => 'NewsStoreConsumed',
+    'class' => 'CRM_Newsstore_DAO_NewsStoreConsumed',
+    'table' => 'civicrm_newsstoreconsumed',
   ];
 }
