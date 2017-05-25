@@ -136,3 +136,15 @@ function newsstore_civicrm_angularModules(&$angularModules) {
 function newsstore_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _newsstore_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
+
+/**
+ * Define our entities.
+ */
+function newsstore_civicrm_entityTypes(&$entityTypes) {
+  $x=1;
+  $entityTypes[] = [
+    'name' => 'NewsSource',
+    'class' => 'CRM_Newsstore_DAO_NewsSource',
+    'table' => 'civicrm_newssource',
+  ];
+}
