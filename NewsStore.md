@@ -3,7 +3,7 @@
 Authors:
 
 - *Björn Endres, SYSTOPIA, version 0.1, 2017-04-25*
-- Rich Lott, Artful Robot, version 0.2, 2017-05-25
+- Rich Lott, Artful Robot.
 
 **CiviCRM Extension to handle (backend) news items from various sources.**
 
@@ -44,7 +44,7 @@ There should be a new CiviCRM entity called NewsItem with the following attribut
 
 Get (cached) NewsItems from the store.
 
- * ``sources``: array of NewsSource IDs [mandatory]
+ * ``source``: single news source ID
  * ``is_consumed``: any|yes|no defaults to no.
  * ``date_from``: timestamp-based restriction of search
  * ``date_to``: timestamp-based restriction of search
