@@ -77,7 +77,7 @@ function civicrm_api3_news_store_item_get($params) {
     $source_sql->where('nsc.newsstoresource_id IN (#source)', ['source' => $params['source']]);
 
     if (!isset($params['is_consumed'])) {
-      $params['is_consumed'] = 'no';
+      $params['is_consumed'] = 0;
     }
 
     // Fix array passed.
