@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Newsstore</base>
+  <class>NewsSource</class>
+  <name>civicrm_newssource</name>
+  <comment>FIXME</comment>
+  <add>4.6</add>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique NewsSource ID</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>name</name>
+    <type>varchar</type>
+    <length>255</length>
+    <required>true</required>
+    <comment>Human name to identify this NewsSource used in administrative interface.</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>uri</name>
+    <type>varchar</type>
+    <length>1024</length>
+    <required>true</required>
+    <comment>A URI used by the class implementing fetch to identify the source. e.g. for an RSS source it might be https://mysite.com/rss.xml</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>type</name>
+    <type>varchar</type>
+    <length>255</length>
+    <required>true</required>
+    <comment>The name of the implementing class. Different classes are availble for different types of source, e.g. RSS or Drupal Views.</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>last_fetched</name>
+    <type>datetime</type>
+    <required>false</required>
+    <comment>When this source was last fetched from.</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>retention_days</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>How many days should items be kept for?</comment>
+    <default>30</default>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>fetch_frequency</name>
+    <type>varchar</type>
+    <length>20</length>
+    <required>true</required>
+    <comment>How many days should items be kept for?</comment>
+    <add>4.6</add>
+  </field>
+
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>contact_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+    <add>4.6</add>
+  </field>
+  <foreignKey>
+    <name>contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <add>4.6</add>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+</table>
