@@ -1,12 +1,21 @@
 #Proposal: "NewsStore" Extension
 
-*Björn Endres, SYSTOPIA, version 0.1, 2017-04-25*
+Authors:
+
+- *Björn Endres, SYSTOPIA, version 0.1, 2017-04-25*
+- Rich Lott, Artful Robot, version 0.2, 2017-05-25
 
 **CiviCRM Extension to handle (backend) news items from various sources.**
 
 ## Concept
 
-This concept is closely related to Rich Lott's "Automated RSS Mailer" proposal. The idea is to have a separate extension providing the infrastructure for dealing with consumable news items. These items can be collected from various sources (e.g. RSS feeds, Drupal data, CiviCRM internals like new Contact or Event entities, etc.). These items can then be fetched, cached, read, and consumed by any number of clients in the system. The NewsStore extension itself doesn't have to contain any client implementations.
+This concept is closely related to Rich Lott's "Automated RSS Mailer" proposal.
+The idea is to have a separate extension providing the infrastructure for
+dealing with consumable news items. These items can be collected from various
+sources (e.g. RSS feeds, Drupal data, CiviCRM internals like new Contact or
+Event entities, etc.). These items can then be fetched, cached, read, and
+consumed by any number of clients in the system. The NewsStore extension itself
+doesn't have to contain any client implementations.
 
 
 ## NewsItem entity
@@ -22,13 +31,11 @@ There should be a new CiviCRM entity called NewsItem with the following attribut
 
 ## NewsSource entity
 
- * ``id``: unique ID
- * ``type``: some kind of reference to the implementing class
- * ``uri``: a URI defining its parameters, e.g. a RSS URL
- * ``range_from``: date field - all items between the two dates are known to the NewsStore
- * ``range_to``: see "range_from". This is logically the same as a "last fetched" value.
- * ``item_count``: number of items known to the store
- * ``new_count``: number of new (not consumend) items known to the store
+ * ``id``: unique ID.
+ * ``name``: Human facing name for administrative reference.
+ * ``type``: some kind of reference to the implementing class.
+ * ``uri``: a URI defining its parameters, e.g. a RSS URL.
+ * ``last_fetched``: Date this source was last fetched.
  * ``retention_days``: how long should items be cached (in days).
 
 ## API
@@ -38,7 +45,7 @@ There should be a new CiviCRM entity called NewsItem with the following attribut
 Get (cached) NewsItems from the store.
 
  * ``sources``: array of NewsSource IDs [mandatory]
- * ``is_new``: boolean [default: yes])
+ * ``is_consumed``: any|yes|no defaults to no.
  * ``date_from``: timestamp-based restriction of search
  * ``date_to``: timestamp-based restriction of search
  *  **returns:** list of NewsItem
