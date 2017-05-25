@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Newsstore</base>
+  <class>NewsStoreItem</class>
+  <name>civicrm_newsstoreitem</name>
+  <comment>Represents a single item fetched by a NewsSource, part of the NewsStore extension.</comment>
+  <add>4.6</add>
+  <log>true</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique NewsStoreItem ID</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>uri</name>
+    <type>varchar</type>
+    <length>1024</length>
+    <required>true</required>
+    <comment>Unique URI for this news item. Typically a link to a web page.</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>title</name>
+    <type>varchar</type>
+    <length>255</length>
+    <required>true</required>
+    <comment>Title of item</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>body</name>
+    <type>longtext</type>
+    <comment>The main body content of the item.</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>teaser</name>
+    <type>longtext</type>
+    <comment>Short summary of the content.</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>timestamp</name>
+    <type>timestamp</type>
+    <required>true</required>
+    <comment>Either the date published or the date fetched, if published date missing or not relevant.</comment>
+    <add>4.6</add>
+  </field>
+
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <index>
+    <name>uri</name>
+    <fieldName>uri</fieldName>
+    <unique>true</unique>
+  </index>
+
+</table>

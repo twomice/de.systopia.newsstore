@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Newsstore</base>
+  <class>NewsStoreConsumed</class>
+  <name>civicrm_newsstoreconsumed</name>
+  <comment>Maps between NewsSource and NewsStoreItem recording which items have been consumed by which source.</comment>
+  <add>4.6</add>
+  <log>true</log>
+
+  <!-- better to do without this and have PK as the two FKs but not entirely clear whether that's OK. eg. civicrm_activity_contact uses its own ID. -->
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique NewsStoreConsumed ID</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>newssource_id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Foreign key identifying a NewsSource</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>newsstoreitem_id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Foreign key identifying a NewsStoreItem</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>is_consumed</name>
+    <type>boolean</type>
+    <required>true</required>
+    <default>0</default>
+    <comment>True means the NewsSource has consumed the NewsStoreItem.</comment>
+    <add>4.6</add>
+  </field>
+
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <foreignKey>
+    <name>newssource_id</name>
+    <table>civicrm_newssource</table>
+    <key>id</key>
+    <add>4.6</add>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <foreignKey>
+    <name>newsstoreitem_id</name>
+    <table>civicrm_newsstoreitem</table>
+    <key>id</key>
+    <add>4.6</add>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <!-- there should only ever be one mapping between a source and an item. -->
+  <index>
+    <name>sourceitem</name>
+    <fieldName>newssource_id</fieldName>
+    <fieldName>newsstoreitem_id</fieldName>
+    <unique>true</unique>
+  </index>
+
+</table>
