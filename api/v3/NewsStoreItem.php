@@ -74,20 +74,10 @@ function civicrm_api3_news_store_item_get($params) {
 
   if (!empty($params['source'])) {
     $require_joins = TRUE;
-    if (is_array($params['source'])) {
-      if (isset($params['source']['IN'])) {
-        $source_sql->where('nsc.newsstoresource_id IN (#source)', ['source' => $params['source']['IN']]);
-      }
-      else {
-        throw new InvalidArgumentException("source supports = and IN operators only.");
-      }
-    }
-    else {
-      $source_sql->where('nsc.newsstoresource_id IN (#source)', ['source' => $params['source']]);
-    }
+    $source_sql->where('nsc.newsstoresource_id IN (#source)', ['source' => $params['source']]);
 
     if (!isset($params['is_consumed'])) {
-      $params['is_consumed'] = 0;
+      $params['is_consumed'] = 'no';
     }
 
     // Fix array passed.
