@@ -22,4 +22,27 @@ class CRM_Newsstore_BAO_NewsStoreSource extends CRM_Newsstore_DAO_NewsStoreSourc
     return $instance;
   } */
 
+  /**
+   * Returns the NewsStoreSource.get result.
+   *
+   * This is all the NewsStoreSource data plus stats about items.
+   */
+  public static function apiGet($params) {
+    $sql = "
+          SELECT ns.*,
+            COALESCE(nsstats.itemsTotal, 0) itemsTotal,
+            COALESCE(nsstats.itemsUnconsumed, 0) itemsUnconsumed
+          FROM civicrm_newsstoresource ns
+          LEFT JOIN (
+            SELECT newsstoresource_id id, COUNT(id) itemsTotal, SUM(is_consumed=0) itemsUnconsumed
+            FROM civicrm_newsstoreconsumed
+            GROUP BY newsstoresource_id
+          ) nsstats ON ns.id = nsstats.id
+          ORDER BY name;
+      ";
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    $return_values = $dao->fetchAll();
+    $dao->free();
+    return $return_values;
+  }
 }

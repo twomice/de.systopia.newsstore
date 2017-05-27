@@ -42,5 +42,6 @@ function civicrm_api3_news_store_source_delete($params) {
  * @throws API_Exception
  */
 function civicrm_api3_news_store_source_get($params) {
-  return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
+  $return_values = CRM_Newsstore_BAO_NewsStoreSource::apiGet($params);
+  return civicrm_api3_create_success($return_values, $params, 'NewsStoreSource', 'get');
 }

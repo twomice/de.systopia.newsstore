@@ -1,0 +1,61 @@
+<div class="crm-container">
+
+  <div id="newsstore-sources-list" ng-show="screen=='sources'" >
+    <h1 crm-page-title>{{ ts('News Store: Sources') }}</h1>
+
+    <table class="newsstore-sources-list" >
+      <thead>
+        <tr>
+          <th>{{ ts('Name') }}</th>
+          <th>{{ ts('Last fetch') }}</th>
+          <th>{{ ts('Items') }}</th>
+          <th>{{ ts('Actions') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="row in nsSources" >
+          <td>{{ row.name }}</td>
+          <td>{{ row.last_fetched }} </td>
+          <td>{{ row.itemsUnconsumed }} / {{ row.itemsTotal }}</td>
+          <td>
+            <span ng-show="row.itemsTotal>0">
+              <a href ng-click="viewItemsInSource(row)" >{{ ts('View Items') }}</a>
+              |
+            </span>
+            <a href ng-click="fetchSource(row.id)" >{{ ts('Fetch') }}</a>
+            |
+            <a href ng-click="editSource(row.id)" >{{ ts('Configure') }}</a>
+            |
+            <a href ng-click="deleteSource(row.id)" >{{ ts('Delete') }}</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div id="newsstore-items-list" ng-show="screen=='items'" >
+    <h1 crm-page-title>{{ ts('News Store: Items in') + nsSource.name }}</h1>
+    <table class="newsstore-items-list" >
+      <thead>
+        <tr>
+          <th>{{ ts('Date') }}</th>
+          <th>{{ ts('Consumed?') }}</th>
+          <th>{{ ts('Title') }}</th>
+          <th>{{ ts('Actions') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="row in nsItems" >
+          <td>{{ row.timestamp }}</td>
+          <td>{{ ts(row.is_consumed ? 'Yes' : 'No') }} </td>
+          <td>{{ row.title }}</td>
+          <td>
+            <a href ng-click="showItemDetails(row.id)" >{{ ts('Show Details') }}</a>
+            |
+            <a href ng-click="updateItemConsumed(row.id, 0)" >{{ row.is_consumed ? ts('Mark not consumed') : ts('Mark consumed') }}</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
