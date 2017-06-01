@@ -45,4 +45,22 @@ class CRM_Newsstore_BAO_NewsStoreSource extends CRM_Newsstore_DAO_NewsStoreSourc
     $dao->free();
     return $return_values;
   }
+  /**
+   * Fetch items from the source.
+   *
+   * Invoked by Api NewsStoreSource.Fetch action.
+   */
+  public static function apiFetch($params) {
+
+    $id = empty($params['id']) ? 0 : (int) $params['id'];
+    if (! $id > 0) {
+      throw new InvalidArgumentException("requires valid integer NewsStoreSource id");
+    }
+
+    $dao = static::findById(id);
+    // Now need NewsStoreSource object.
+    $source = CRM_NewsStore::factory($dao);
+
+    return $return_values;
+  }
 }
