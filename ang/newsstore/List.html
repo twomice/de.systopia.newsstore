@@ -34,7 +34,8 @@
   </div>
 
   <div id="newsstore-items-list" ng-show="screen=='items'" >
-    <h1 crm-page-title>{{ ts('News Store: Items in') + nsSource.name }}</h1>
+    <h1 crm-page-title>{{ ts('News Store Items in: ') + nsSource.name }}</h1>
+    <a href ng-click="screen='sources'" class='button' >« {{ ts('Back to sources list') }}</a>
     <table class="newsstore-items-list" >
       <thead>
         <tr>
