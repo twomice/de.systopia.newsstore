@@ -37,9 +37,67 @@ class CRM_Newsstore_ApiTest extends \PHPUnit_Framework_TestCase implements Headl
   }
 
   /**
-   * Example: Test that a version is returned.
+   * Test that news items are/are not fetched based on source and is_consumed.
    */
-  public function testConsumed() {
+  public function testItemGetFiltersBySourceAndConsumed() {
+    $fixtures = $this->createOneSourceAndItem();
+
+    // test getting NewsItems that have not been consumed works.
+    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $fixtures->source['id'], 'sequential' => 1]);
+    $this->assertEquals(1, $items['count']);
+    $this->assertEquals($fixtures->item['id'], $items['values'][0]['id']);
+
+    // test getting NewsItems that have been consumed works - should not be any.
+    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $fixtures->source['id'], 'is_consumed' => 1]);
+    $this->assertEquals(0, $items['count']);
+
+    // consume the item via direct API call, then retest.
+    civicrm_api3('NewsStoreConsumed', 'create', ['id' => $fixtures->link['id'], 'is_consumed' => 1]);
+
+    // should not be any unconsumed items.
+    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $fixtures->source['id'], 'sequential' => 1]);
+    $this->assertEquals(0, $items['count']);
+
+    // test getting NewsItems that have been consumed works - should not be any.
+    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $fixtures->source['id'], 'is_consumed' => 1, 'sequential' => 1]);
+    $this->assertEquals(1, $items['count']);
+    $this->assertEquals($fixtures->item['id'], $items['values'][0]['id']);
+
+  }
+
+  /**
+   * Test that news items are/are not fetched based on source and is_consumed.
+   *
+   * This is similar to testItemGetFiltersBySourceAndConsumed() except that
+   * this tests the GetWithUsage API action which is capable of returning the
+   * is_consumed and NewsStoreConsumed.id fields, rather than just a filtered set.
+   */
+  public function testItemGetWithUsage() {
+    $fixtures = $this->createOneSourceAndItem();
+
+    $items = civicrm_api3('NewsStoreItem', 'GetWithUsage', ['source' => $fixtures->source['id'], 'sequential' => 1]);
+    $this->assertEquals(1, $items['count']);
+    $this->assertEquals($fixtures->item['id'], $items['values'][0]['id']);
+    $this->assertEquals(0, $items['values'][0]['is_consumed']);
+    $this->assertEquals($fixtures->link['id'], $items['values'][0]['newsstoreconsumed_id']);
+
+    // Consume the item via direct API call, then retest.
+    civicrm_api3('NewsStoreConsumed', 'create', ['id' => $fixtures->link['id'], 'is_consumed' => 1]);
+
+    $items = civicrm_api3('NewsStoreItem', 'GetWithUsage', ['source' => $fixtures->source['id'], 'sequential' => 1]);
+    $this->assertEquals(1, $items['count']);
+    $this->assertEquals($fixtures->item['id'], $items['values'][0]['id']);
+    $this->assertEquals(1, $items['values'][0]['is_consumed']);
+    $this->assertEquals($fixtures->link['id'], $items['values'][0]['newsstoreconsumed_id']);
+
+  }
+
+  /**
+   * Helper DRY code for creating one source with one linked, unconsumed item.
+   *
+   * @return StdClass object with properties: source, item, link.
+   */
+  public function createOneSourceAndItem() {
     $source = civicrm_api3('NewsStoreSource', 'create', [
       'sequential' => 1,
       'name' => 'Test Feed',
@@ -61,33 +119,15 @@ class CRM_Newsstore_ApiTest extends \PHPUnit_Framework_TestCase implements Headl
       'newsstoreitem_id' => $item['id'],
       'newsstoresource_id' => $source['id'],
       'is_consumed' => 0,
+      'sequential' => 1,
     ]);
     $this->assertGreaterThan(0, $link['id']);
 
-    // test getting NewsItems that have not been consumed works.
-    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $source['id'], 'sequential' => 1]);
-    $this->assertEquals(1, $items['count']);
-    $this->assertEquals($item['id'], $items['values'][0]['id']);
-
-    // test getting NewsItems that have been consumed works - should not be any.
-    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $source['id'], 'is_consumed' => 1]);
-    $this->assertEquals(0, $items['count']);
-
-    // consume the item via direct API call, then retest.
-    civicrm_api3('NewsStoreConsumed', 'create', [
-      'id' => $link['id'],
-      'is_consumed' => 1,
-    ]);
-
-    // should not be any unconsumed items.
-    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $source['id'], 'sequential' => 1]);
-    $this->assertEquals(0, $items['count']);
-
-    // test getting NewsItems that have been consumed works - should not be any.
-    $items = civicrm_api3('NewsStoreItem', 'get', ['source' => $source['id'], 'is_consumed' => 1, 'sequential' => 1]);
-    $this->assertEquals(1, $items['count']);
-    $this->assertEquals($item['id'], $items['values'][0]['id']);
-
+    return (object) [
+      'source' => $source['values'][0],
+      'item' => $source['values'][0],
+      'link' => $source['values'][0],
+    ];
   }
 
 }

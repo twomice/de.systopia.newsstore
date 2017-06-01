@@ -22,4 +22,29 @@ class CRM_Newsstore_BAO_NewsStoreItem extends CRM_Newsstore_DAO_NewsStoreItem {
     return $instance;
   } */
 
+  /**
+   * Gets list of items for a particular source, plus some data from consumed table.
+   *
+   * Used by NewsStoreItem.GetWithUsage action.
+   *
+   * @param array $params. Must contain 'source' key which should be a valid source ID integer.
+   * @return array
+   */
+  public static function apiGetWithUsage($params) {
+    $sql = "
+          SELECT nsi.*,
+            nsc.id newsstoreconsumed_id,
+            nsc.is_consumed
+          FROM civicrm_newsstoreitem nsi
+          INNER JOIN civicrm_newsstoreconsumed nsc ON nsi.id = nsc.newsstoreitem_id AND nsc.newsstoresource_id = %1
+          ORDER BY nsi.timestamp DESC;
+      ";
+    $params = [1 => [$params['source'], 'Integer']];
+
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    $return_values = $dao->fetchAll();
+    $dao->free();
+    return $return_values;
+  }
+
 }

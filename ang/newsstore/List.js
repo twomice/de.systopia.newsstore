@@ -33,10 +33,10 @@
     // UI mode:
     $scope.screen = 'sources';
 
+    // Functions for sources.
     $scope.viewItemsInSource = function(nsSource) {
-
       $scope.nsSource = nsSource;
-      return crmApi('NewsStoreItem', 'get', { source: nsSource.id })
+      return crmApi('NewsStoreItem', 'getWithUsage', { source: nsSource.id })
       .then(function(result) {
         $scope.nsItems = result.values || [];
         $scope.screen = 'items';
@@ -52,6 +52,14 @@
       console.log("@todo", nsSource);
     };
 
+    // Functions for items.
+    $scope.updateItemConsumed = function(item, newIsConsumed) {
+      console.log('updateItemConsumed item:', item);
+      return crmApi('NewsStoreConsumed', 'create', { id: item.newsstoreconsumed_id, is_consumed: newIsConsumed })
+      .then(function(result) {
+        item.is_consumed = newIsConsumed;
+      });
+    };
 
   });
 

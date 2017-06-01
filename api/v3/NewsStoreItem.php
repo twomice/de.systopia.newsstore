@@ -115,3 +115,38 @@ function civicrm_api3_news_store_item_get($params) {
 
   return _civicrm_api3_basic_get($bao_name, $params, TRUE, "", $source_sql);
 }
+/**
+ * NewsStoreItem.GetWithUsage API specification (optional)
+ * This is used for documentation and validation.
+ *
+ * @param array $spec description of fields supported by this API call
+ * @return void
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/API+Architecture+Standards
+ */
+function _civicrm_api3_news_store_item_GetWithUsage_spec(&$spec) {
+  $spec['source'] = [
+    'description' => 'The ID of the NewsStoreSource that you want items for.',
+    'api.required' => 1,
+  ];
+}
+
+/**
+ * NewsStoreItem.GetWithUsage API
+ *
+ * Custom collection getter to allow for joining against a particular source.
+ *
+ * @param array $params
+ * @return array API result descriptor
+ * @see civicrm_api3_create_success
+ * @see civicrm_api3_create_error
+ * @throws API_Exception
+ */
+function civicrm_api3_news_store_item_GetWithUsage($params) {
+
+  if (empty($params['source']) || ! ((int) $params['source'] > 0)) {
+    throw new API_Exception("Source must be specified as the integer source ID");
+  }
+
+  $return_values = CRM_Newsstore_BAO_NewsStoreItem::apiGetWithUsage($params);
+  return civicrm_api3_create_success($return_values, $params, 'NewsSourceItem', 'GetWithUsage');
+}

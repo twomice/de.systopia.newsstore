@@ -37,6 +37,8 @@ function civicrm_api3_news_store_source_delete($params) {
 /**
  * NewsStoreSource.get API
  *
+ * This is a custom getter so we can add in some stats.
+ *
  * @param array $params
  * @return array API result descriptor
  * @throws API_Exception

@@ -32,6 +32,7 @@
       </tbody>
     </table>
   </div>
+
   <div id="newsstore-items-list" ng-show="screen=='items'" >
     <h1 crm-page-title>{{ ts('News Store: Items in') + nsSource.name }}</h1>
     <table class="newsstore-items-list" >
@@ -51,7 +52,7 @@
           <td>
             <a href ng-click="showItemDetails(row.id)" >{{ ts('Show Details') }}</a>
             |
-            <a href ng-click="updateItemConsumed(row.id, 0)" >{{ row.is_consumed ? ts('Mark not consumed') : ts('Mark consumed') }}</a>
+            <a href ng-click="updateItemConsumed(row, row.is_consumed ? 0 : 1)" >{{ row.is_consumed ? ts('Mark not consumed') : ts('Mark consumed') }}</a>
           </td>
         </tr>
       </tbody>
