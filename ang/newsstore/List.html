@@ -85,13 +85,17 @@
           <td>{{ row.title }}</td>
           <td>
             <a href ng-click="updateItemConsumed(row, (row.is_consumed == 1) ? 0 : 1)" >{{ (row.is_consumed == 1) ? ts('Mark not consumed') : ts('Mark consumed') }}</a>
-            <a href ng-if="itemSelected && (itemSelected.id == row.id)" ng-click="showItemDetails()" >{{ ts('Hide Details') }}</a>
             <br />
+            <a href ng-if="itemSelected && (itemSelected.id == row.id)" ng-click="showItemDetails()" >{{ ts('Hide Details') }}</a>
             <a href ng-if="!itemSelected || (itemSelected.id != row.id)" ng-click="showItemDetails(row)" >{{ ts('Show Details') }}</a>
           </td>
         </tr>
         <tr ng-repeat-end ng-if="itemSelected && (itemSelected.id == row.id)" >
           <td colspan=4 style="background-color:#eee;">
+            <h3>Teaser</h3>
+            <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;">
+              {{ itemSelected.teaser }}
+            </div>
             <h3>Body</h3>
             <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;">
               {{ itemSelected.body }}

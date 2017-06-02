@@ -35,7 +35,7 @@ class CRM_Newsstore_Rss extends CRM_Newsstore
         'timestamp'  => date('Y-m-d H:i:s', strtotime((string) $item->pubDate)),
       ];
       // Create teaser.
-      $teaser = strip_tags((string) $item->description);
+      $teaser = html_entity_decode(strip_tags((string) $item->description));
       $strlen = function_exists('mb_strlen') ? 'mb_strlen' : 'strlen';
       $substr = function_exists('mb_substr') ? 'mb_substr' : 'substr';
       if ($strlen($teaser) > 300) {
