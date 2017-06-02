@@ -68,7 +68,11 @@
     };
     $scope.editSource = function(nsSource) {
       // Take a copy; we might not want to save it.
-      $scope.nsSource = Object.assign({}, nsSource);
+      $scope.nsSource = Object.assign({
+        retention_days: 30,
+        fetch_frequency: 'daily',
+        type: 'Rss',
+      }, nsSource);
       $scope.screen = 'source-edit';
     };
     $scope.saveSourceEdits = function(nsSource) {
@@ -101,7 +105,6 @@
         // Fetch item and pop it up.
         return crmApi('NewsStoreItem', 'get', { id: item.id })
           .then(function(result) {
-            console.log("xxx", result.values[item.id]);
             $scope.itemSelected = result.values[item.id];
           });
       }
