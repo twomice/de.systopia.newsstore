@@ -47,4 +47,3 @@ function cv($cmd, $decode = 'json') {
       throw new RuntimeException("Bad decoder format ($decode)");
   }
 }
-echo "booted\n";

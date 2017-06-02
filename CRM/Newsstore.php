@@ -42,6 +42,9 @@ abstract class CRM_Newsstore {
    */
   public function fetch() {
     $old_items_count = 0;
+    $newly_linked_items_count = 0;
+    $new_items = 0;
+    $items_to_link = [];
 
     // Get the raw items, keyed by URI.
     // The content of this array does not need to adhere to any standard at
@@ -59,17 +62,39 @@ abstract class CRM_Newsstore {
         $sql[] = "%$i";
         $i++;
       }
-      $sql = "SELECT uri FROM civicrm_newsstoreitem WHERE uri IN ("
+      $sql = "SELECT uri, nsi.id, nsc.newsstoresource_id
+        FROM civicrm_newsstoreitem nsi
+        LEFT JOIN civicrm_newsstoreconsumed nsc
+          ON nsi.id = nsc.newsstoreitem_id
+        WHERE uri IN ("
         . implode(',', $sql) . ");";
 
       $dao = CRM_Core_DAO::executeQuery($sql, $params);
+      $items_already_linked = [];
       while ($dao->fetch()) {
+        if ($dao->newsstoresource_id == $this->source->id) {
+          // We have this item and it's already linked to this source.
+          $items_already_linked[$dao->uri] = TRUE;
+          // Ensure it's NOT in our list.
+          unset($items_to_link[$dao->uri]);
+          // Count it as old.
+          $old_items_count++;
+        }
+        else {
+          // We have this item linked to a different source, so
+          // we may need to create a link to it, but first check that
+          // we don't know it's already linked.
+          if (!array_key_exists($dao->uri, $items_already_linked)) {
+            $items_to_link[$dao->uri] = $dao->id;
+          }
+        }
+
+        // Remove it from raw items since we've already cached it.
         unset($raw_items[$dao->uri]);
-        $old_items_count++;
       }
       $dao->free();
-
     }
+    $newly_linked_items_count = count($items_to_link);
 
     // Insert the new items.
     foreach($raw_items as $raw_item) {
@@ -83,12 +108,8 @@ abstract class CRM_Newsstore {
       $item->copyValues($values);
       $item->save();
 
-      // Create an unconsumed item linking it to this source.
-      $link = new CRM_Newsstore_BAO_NewsStoreConsumed();
-      $link->newsstoresource_id = $this->source->id;
-      $link->newsstoreitem_id = $item->id;
-      $link->is_consumed = 0;
-      $link->save();
+      // Remember to make a link to this item from this source.
+      $items_to_link[$item->uri] = $item->id;
 
       // Offer postprocess hook for this item.
       // This could be used, for example, to fetch and cache related resources
@@ -96,6 +117,16 @@ abstract class CRM_Newsstore {
       $this->postProcessRawItem($item);
 
       unset($item);
+    }
+
+    // Create links to items.
+    foreach ($items_to_link as $uri=>$newsstoreitem_id) {
+      // Create an unconsumed item linking it to this source.
+      $link = new CRM_Newsstore_BAO_NewsStoreConsumed();
+      $link->newsstoresource_id = $this->source->id;
+      $link->newsstoreitem_id = $newsstoreitem_id;
+      $link->is_consumed = 0;
+      $link->save();
     }
 
     // Update the last fetched date for the source.
@@ -106,6 +137,7 @@ abstract class CRM_Newsstore {
     return [
       'old' => $old_items_count,
       'new' => count($raw_items),
+      'new_link' => $newly_linked_items_count,
     ];
   }
   /**

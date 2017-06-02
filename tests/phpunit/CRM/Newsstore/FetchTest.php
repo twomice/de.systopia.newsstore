@@ -36,7 +36,7 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
     $vars = $this->createDummySourceWithOneItem();
 
     // We expect 1 new item.
-    $this->assertEquals(['old' => 0, 'new' => 1], $vars->stats);
+    $this->assertEquals(['old' => 0, 'new' => 1, 'new_link' => 0], $vars->stats);
 
     // There should now be one item for this source.
     $items = CRM_Newsstore_BAO_NewsStoreItem::apiGetWithUsage(['source' => $vars->source_id]);
@@ -70,7 +70,7 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
     $stats = $vars->store->fetch();
 
     // We expect 1 new item, 1 old.
-    $this->assertEquals(['old' => 0, 'new' => 0], $stats);
+    $this->assertEquals(['old' => 0, 'new' => 0, 'new_link' => 0], $stats);
 
   }
 
@@ -104,7 +104,7 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
     $stats = $vars->store->fetch();
 
     // We expect 1 new item, 1 old.
-    $this->assertEquals(['old' => 1, 'new' => 1], $stats);
+    $this->assertEquals(['old' => 1, 'new' => 1, 'new_link' => 0], $stats);
 
     // There should now be two items for this source.
     $items = CRM_Newsstore_BAO_NewsStoreItem::apiGetWithUsage(['source' => $vars->source_id]);
@@ -139,6 +139,34 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
 
     // Run fetch again.
     $stats = $vars->store->fetch();
+  }
+
+  /**
+   * If an item is already loaded, but was not loaded for this source,
+   * we need to add a NewsStoreConsumed link to the source, but not download it again.
+   */
+  public function testFetchExistingItemsToNewSource() {
+
+    $now = date('Y-m-d H:i:s');
+    $vars = $this->createDummySourceWithOneItem();
+
+    // Create second source fixture.
+    $source_2 = civicrm_api3('NewsStoreSource', 'create', [
+      'sequential' => 1,
+      'name' => 'Second source',
+      'uri' => 'http://example.com/2',
+      'type' => 'Dummy',
+    ]);
+    $source_bao_2 = CRM_Newsstore_BAO_NewsStoreSource::findById($source_2['id']);
+    $store_2 = CRM_Newsstore::factory($source_bao_2);
+    $stats = $store_2->fetch();
+
+    // We expect 1 new item (even though it was known to another source, it is new to us), 0 old.
+    $this->assertEquals(['old' => 0, 'new' => 0, 'new_link' => 1], $stats);
+
+    $stats = $store_2->fetch();
+    $this->assertEquals(['old' => 1, 'new' => 0, 'new_link' => 0], $stats);
+
   }
 
   /**
