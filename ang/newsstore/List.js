@@ -32,6 +32,16 @@
     $scope.nsItems = null;
     // UI mode:
     $scope.screen = 'sources';
+    // Item selected.
+    $scope.itemSelected = null;
+
+    // DRY.
+    var reloadSources = function() {
+      return crmApi('NewsStoreSource', 'get', {} )
+        .then(function(result) {
+          $scope.nsSources = result.values;
+        });
+    };
 
     // Functions for sources.
     $scope.viewItemsInSource = function(nsSource) {
@@ -43,35 +53,60 @@
       });
     };
     $scope.fetchSource = function(nsSource) {
-      console.log("fetchSource ", nsSource);
       return crmStatus(
         {start: ts('Fetching Source...'), end: ''},
         crmApi('NewsStoreSource', 'fetch', { id: nsSource.id }))
       .then(function(result) {
-        //console.log("fetch result ", result);
-        crmUiAlert({text: result.values['new'] + ts(' new item(s) fetched.'), type: 'info'});
-        return crmApi('NewsStoreSource', 'get', {})
-          .then(function(result) {
-            // console.log("get result ", result);
-            $scope.nsSources = result.values;
-        });
+        crmUiAlert({
+          title: ts('Fetch results'),
+          text: ts(
+          '%1 new item(s),<br/>%2 existing item(s) linked this source,<br/>%3 item(s) already cached.',
+          { 1: result.values['new'], 2: result.values.new_link, 3: result.values.old }
+        ), type: 'info'});
+        return reloadSources();
       })
     };
     $scope.editSource = function(nsSource) {
-      console.log("@todo", nsSource);
+      // Take a copy; we might not want to save it.
+      $scope.nsSource = Object.assign({}, nsSource);
+      $scope.screen = 'source-edit';
+    };
+    $scope.saveSourceEdits = function(nsSource) {
+      var params = _.pick(nsSource, ['id', 'name', 'uri', 'type', 'retention_days', 'fetch_frequency']);
+      return crmApi('NewsStoreSource', 'create', params)
+        .then(reloadSources())
+        .then(function(result) { $scope.screen = 'sources'; });
     };
     $scope.deleteSource = function(nsSource) {
-      console.log("@todo", nsSource);
+      if (confirm(ts('Delete source "%1"? This cannot be un-done.', { 1: nsSource.name }))) {
+        return crmApi('NewsStoreSource', 'delete', { id: nsSource.id })
+          .then(reloadSources());
+      }
     };
 
     // Functions for items.
     $scope.updateItemConsumed = function(item, newIsConsumed) {
-      console.log('updateItemConsumed item:', item);
       return crmApi('NewsStoreConsumed', 'create', { id: item.newsstoreconsumed_id, is_consumed: newIsConsumed })
       .then(function(result) {
         item.is_consumed = newIsConsumed;
-      });
+      })
+      .then(reloadSources());
     };
+
+    $scope.showItemDetails = function(item) {
+      if (!item) {
+        $scope.itemSelected = null;
+      }
+      else {
+        // Fetch item and pop it up.
+        return crmApi('NewsStoreItem', 'get', { id: item.id })
+          .then(function(result) {
+            console.log("xxx", result.values[item.id]);
+            $scope.itemSelected = result.values[item.id];
+          });
+      }
+    };
+
 
   });
 

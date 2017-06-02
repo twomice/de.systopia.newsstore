@@ -1,8 +1,8 @@
+<h1 crm-page-title>{{ ts('News Store') }}</h1>
 <div class="crm-container">
 
   <div id="newsstore-sources-list" ng-show="screen=='sources'" >
-    <h1 crm-page-title>{{ ts('News Store: Sources') }}</h1>
-
+    <h1 >{{ ts('Sources List') }}</h1>
     <table class="newsstore-sources-list" >
       <thead>
         <tr>
@@ -24,17 +24,50 @@
             </span>
             <a href ng-click="fetchSource(row)" >{{ ts('Fetch') }}</a>
             |
-            <a href ng-click="editSource(row.id)" >{{ ts('Configure') }}</a>
+            <a href ng-click="editSource(row)" >{{ ts('Configure') }}</a>
             |
-            <a href ng-click="deleteSource(row.id)" >{{ ts('Delete') }}</a>
+            <a href ng-click="deleteSource(row)" >{{ ts('Delete') }}</a>
           </td>
         </tr>
       </tbody>
     </table>
+    <a href class='button' ng-click="editSource()" >{{ ts('Add News Store Source') }}</a>
   </div>
 
+  <div id="newsstore-source-edit" ng-show="screen=='source-edit'" >
+    <h1 >{{ ts('News Store Source: %1', {1: nsSource.name || 'Add New' }) }}</h1>
+
+    <a href ng-click="screen='sources'" class='button' >« {{ ts('Back to sources list') }}</a><br/>
+
+
+    <form crm-ui-id-scope >
+      <div crm-ui-field="{name: 'nsSource.name', title: ts('Administrative name')}"> <input crm-ui-id="nsSource.name" name="name" ng-model="nsSource.name" required /> </div>
+      <div crm-ui-field="{name: 'nsSource.uri', title: ts('Source URI')}"> <input crm-ui-id="nsSource.uri" uri="uri" required ng-model="nsSource.uri" /> </div>
+      <div crm-ui-field="{name: 'nsSource.type', title: ts('Type')}">
+        <select crm-ui-select="{placeholder:'RSS...', width: '10em', allowClear:false}" ng-model="nsSource.type">
+          <option value="Dummy" >Dummy</option>
+          <option value="Rss" >RSS</option>
+        </select>
+      </div>
+      <div crm-ui-field="{name: 'nsSource.retention_days', title: ts('Retention days')}">
+        <select crm-ui-select="{placeholder:'days...', width: '10em', allowClear:false}" ng-model="nsSource.retention_days">
+          <option value="30" >30</option>
+        </select>
+      </div>
+      <div crm-ui-field="{name: 'nsSource.fetch_frequency', title: ts('Fetch Frequency')}">
+        <select crm-ui-select="{placeholder:'Daily...', width: '10em', allowClear:false}" ng-model="nsSource.fetch_frequency">
+          <option value="daily" >{{ ts('Daily') }}</option>
+        </select>
+      </div>
+
+      <input type="submit" ng-click="saveSourceEdits(nsSource)" value="{{ ts('Save') }}" />
+    </form>
+
+  </div>
+
+
   <div id="newsstore-items-list" ng-show="screen=='items'" >
-    <h1 crm-page-title>{{ ts('News Store Items in: ') + nsSource.name }}</h1>
+    <h1 >{{ ts('Items in: ') + nsSource.name }}</h1>
     <a href ng-click="screen='sources'" class='button' >« {{ ts('Back to sources list') }}</a>
     <table class="newsstore-items-list" >
       <thead>
@@ -46,14 +79,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="row in nsItems" >
+        <tr ng-repeat-start="row in nsItems" data-itemId="{{ row.id }}" style="{{ (itemSelected && itemSelected.id == row.id) ? 'background-color:#eee;' : ''  }}" >
           <td>{{ row.timestamp }}</td>
-          <td>{{ ts(row.is_consumed ? 'Yes' : 'No') }} </td>
+          <td>{{ ts(row.is_consumed == 1 ? 'Yes' : 'No') }}</td>
           <td>{{ row.title }}</td>
           <td>
-            <a href ng-click="showItemDetails(row.id)" >{{ ts('Show Details') }}</a>
+            <a href ng-if="itemSelected && (itemSelected.id == row.id)" ng-click="showItemDetails()" >{{ ts('Hide Details') }}</a>
+            <a href ng-if="!itemSelected || (itemSelected.id != row.id)" ng-click="showItemDetails(row)" >{{ ts('Show Details') }}</a>
             |
-            <a href ng-click="updateItemConsumed(row, row.is_consumed ? 0 : 1)" >{{ row.is_consumed ? ts('Mark not consumed') : ts('Mark consumed') }}</a>
+            <a href ng-click="updateItemConsumed(row, (row.is_consumed == 1) ? 0 : 1)" >{{ (row.is_consumed == 1) ? ts('Mark not consumed') : ts('Mark consumed') }}</a>
+          </td>
+        </tr>
+        <tr ng-repeat-end ng-if="itemSelected && (itemSelected.id == row.id)" >
+          <td colspan=4 style="background-color:#eee;">
+            <h3>Body</h3>
+            <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;">
+              {{ itemSelected.body }}
+            </div>
           </td>
         </tr>
       </tbody>
