@@ -8,7 +8,15 @@ class CRM_Newsstore_Dummy extends CRM_Newsstore {
   /**
    * holds values.
    */
-  public static $raw_items;
+  public static $raw_items = [
+    'the-uri' => [
+      'uri'       => 'the-uri',
+      'title'     => 'Title 1',
+      'body'      => 'body 1',
+      'teaser'    => 'teaser 1',
+      'timestamp' => '2017-01-01',
+    ]
+  ];
 
   /**
    * Fetch and parse items from the source.

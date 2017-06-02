@@ -20,7 +20,7 @@
   //   $scope -- This is the set of variables shared between JS and HTML.
   //   crmApi, crmStatus, crmUiHelp -- These are services provided by civicrm-core.
   //   myContact -- The current contact, defined above in config().
-  angular.module('newsstore').controller('NewsstoreList', function($scope, crmApi, crmStatus, crmUiHelp, nsSources) {
+  angular.module('newsstore').controller('NewsstoreList', function($scope, crmApi, crmUiAlert, crmStatus, crmUiHelp, nsSources) {
     // The ts() and hs() functions help load strings for this module.
     var ts = $scope.ts = CRM.ts('newsstore');
     var hs = $scope.hs = crmUiHelp({file: 'CRM/newsstore/List'}); // See: templates/CRM/newsstore/List.hlp
@@ -43,7 +43,19 @@
       });
     };
     $scope.fetchSource = function(nsSource) {
-      console.log("@todo", nsSource);
+      console.log("fetchSource ", nsSource);
+      return crmStatus(
+        {start: ts('Fetching Source...'), end: ''},
+        crmApi('NewsStoreSource', 'fetch', { id: nsSource.id }))
+      .then(function(result) {
+        //console.log("fetch result ", result);
+        crmUiAlert({text: result.values['new'] + ts(' new item(s) fetched.'), type: 'info'});
+        return crmApi('NewsStoreSource', 'get', {})
+          .then(function(result) {
+            // console.log("get result ", result);
+            $scope.nsSources = result.values;
+        });
+      })
     };
     $scope.editSource = function(nsSource) {
       console.log("@todo", nsSource);

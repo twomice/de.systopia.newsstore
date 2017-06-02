@@ -57,10 +57,10 @@ class CRM_Newsstore_BAO_NewsStoreSource extends CRM_Newsstore_DAO_NewsStoreSourc
       throw new InvalidArgumentException("requires valid integer NewsStoreSource id");
     }
 
-    $dao = static::findById(id);
+    $dao = static::findById($id);
     // Now need NewsStoreSource object.
-    $source = CRM_NewsStore::factory($dao);
-
+    $store = CRM_Newsstore::factory($dao);
+    $return_values = $store->fetch();
     return $return_values;
   }
 }
