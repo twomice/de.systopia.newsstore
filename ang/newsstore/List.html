@@ -56,7 +56,9 @@
       </div>
       <div crm-ui-field="{name: 'nsSource.fetch_frequency', title: ts('Fetch Frequency')}">
         <select crm-ui-select="{placeholder:'Daily...', width: '10em', allowClear:false}" ng-model="nsSource.fetch_frequency">
+          <option value="hourly" >{{ ts('Hourly') }}</option>
           <option value="daily" >{{ ts('Daily') }}</option>
+          <option value="manual" >{{ ts('Manual') }}</option>
         </select>
       </div>
 

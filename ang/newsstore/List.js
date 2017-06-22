@@ -35,7 +35,7 @@
     // Item selected.
     $scope.itemSelected = null;
 
-    // DRY.
+    // DRY. Returns a Promise.
     var reloadSources = function() {
       return crmApi('NewsStoreSource', 'get', {} )
         .then(function(result) {
@@ -64,7 +64,7 @@
           { 1: result.values['new'], 2: result.values.new_link, 3: result.values.old }
         ), type: 'info'});
         return reloadSources();
-      })
+      });
     };
     $scope.editSource = function(nsSource) {
       // Take a copy; we might not want to save it.
@@ -78,13 +78,13 @@
     $scope.saveSourceEdits = function(nsSource) {
       var params = _.pick(nsSource, ['id', 'name', 'uri', 'type', 'retention_days', 'fetch_frequency']);
       return crmApi('NewsStoreSource', 'create', params)
-        .then(reloadSources())
-        .then(function(result) { $scope.screen = 'sources'; });
+        .then(reloadSources)
+        .then(function() { $scope.screen = 'sources'; });
     };
     $scope.deleteSource = function(nsSource) {
       if (confirm(ts('Delete source "%1"? This cannot be un-done.', { 1: nsSource.name }))) {
         return crmApi('NewsStoreSource', 'delete', { id: nsSource.id })
-          .then(reloadSources());
+          .then(reloadSources);
       }
     };
 
@@ -94,7 +94,7 @@
       .then(function(result) {
         item.is_consumed = newIsConsumed;
       })
-      .then(reloadSources());
+      .then(reloadSources);
     };
 
     $scope.showItemDetails = function(item) {
