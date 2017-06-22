@@ -1,8 +1,6 @@
 <?php
 
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * Tests API for NewsStore extension.
@@ -18,7 +16,8 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class CRM_Newsstore_ApiTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class CRM_Newsstore_ApiTest extends CRM_Newsstore_TestHelper
+{
 
   public function setUpHeadless() {
     // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
@@ -93,6 +92,31 @@ class CRM_Newsstore_ApiTest extends \PHPUnit_Framework_TestCase implements Headl
   }
 
   /**
+   * Test that we can fetch multiple sources in one call.
+   */
+  public function testSourceFetchMultipleSources() {
+
+    // Create two sources and configure them such that the second includes one
+    // of the items in the first, and one of its own.
+    $vars_1 = $this->createDummySourceFixture();
+    $this->setDummySourceItemFixtures($vars_1->uri, 'item_a');
+    $vars_2 = $this->createDummySourceFixture();
+    $this->setDummySourceItemFixtures($vars_2->uri, 'items_a_and_b');
+
+    // Fetching these results we expect that:
+    // Nothing is old (since no items have been fetched.)
+    // The first source is fetched and loads item_a: 1 new.
+    // The second source is fetched and loads items a and b: 1 new link, 1 new.
+    // Total 2 new, 1 new link from 2 sources.
+    //
+    $result = civicrm_api3('NewsStoreSource', 'fetch', []);
+    $this->assertEquals(
+      ['old' => 0, 'new' => 2, 'new_link' => 1, 'sources_count' => 2],
+      $result['values']);
+
+  }
+
+  /**
    * Helper DRY code for creating one source with one linked, unconsumed item.
    *
    * @return StdClass object with properties: source, item, link.
@@ -125,8 +149,8 @@ class CRM_Newsstore_ApiTest extends \PHPUnit_Framework_TestCase implements Headl
 
     return (object) [
       'source' => $source['values'][0],
-      'item' => $source['values'][0],
-      'link' => $source['values'][0],
+      'item' => $item['values'][0],
+      'link' => $link['values'][0],
     ];
   }
 

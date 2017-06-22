@@ -39,6 +39,11 @@ abstract class CRM_Newsstore {
   /**
    * Fetch items from source.
    *
+   * @return Array of integer fetched item counts split by key:
+   *   - old
+   *   - new
+   *   - new_link (items were already fetched by a different source)
+   *
    */
   public function fetch() {
     $old_items_count = 0;

@@ -6,17 +6,10 @@
 class CRM_Newsstore_Dummy extends CRM_Newsstore {
 
   /**
-   * holds values.
+   * holds items to return. This must be configured by the test class with
+   * whatever test data is needed.
    */
-  public static $raw_items = [
-    'the-uri' => [
-      'uri'       => 'the-uri',
-      'title'     => 'Title 1',
-      'body'      => 'body 1',
-      'teaser'    => 'teaser 1',
-      'timestamp' => '2017-01-01',
-    ]
-  ];
+  public static $raw_items = [];
 
   /**
    * Fetch and parse items from the source.
@@ -24,6 +17,6 @@ class CRM_Newsstore_Dummy extends CRM_Newsstore {
    * @return array keyed by the URI. There are no restrictions on the type of values.
    */
   protected function fetchRawItems() {
-    return static::$raw_items;
+    return static::$raw_items[$this->source->uri];
   }
 }

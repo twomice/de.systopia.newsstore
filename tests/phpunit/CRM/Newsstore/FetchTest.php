@@ -1,24 +1,14 @@
 <?php
 
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
+require_once __DIR__ . '/TestHelper.php';
 
 /**
  * Tests fetching items.
  *
  * @group headless
  */
-class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
-
-  public function setUpHeadless() {
-    // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
-    // See: https://github.com/civicrm/org.civicrm.testapalooza/blob/master/civi-test.md
-    return \Civi\Test::headless()
-      ->installMe(__DIR__)
-      ->apply();
-  }
-
+class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
+{
   public function setUp() {
     parent::setUp();
   }
@@ -33,7 +23,10 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
   public function testFetchInsertsItems() {
 
     $now = date('Y-m-d H:i:s');
-    $vars = $this->createDummySourceWithOneItem();
+    // Do initial fetch with a single item.
+    $vars = $this->createOneDummySourceWithItems();
+    // time elapses, and now the source has a different item.
+    $this->setDummySourceItemFixtures($vars->uri, 'unique_item');
 
     // We expect 1 new item.
     $this->assertEquals(['old' => 0, 'new' => 1, 'new_link' => 0], $vars->stats);
@@ -64,7 +57,7 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
     $vars = $this->createDummySourceFixture();
 
     // Configure dummy with an empty items set.
-    CRM_Newsstore_Dummy::$raw_items = [];
+    CRM_Newsstore_Dummy::$raw_items[$vars->uri] = [];
 
     // Run fetch.
     $stats = $vars->store->fetch();
@@ -80,25 +73,10 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
   public function testFetchInsertsOnlyNewItems() {
 
     $now = date('Y-m-d H:i:s');
-    $vars = $this->createDummySourceWithOneItem();
-
-    // Now reconfigure dummy news store fixture with another row of data.
-    CRM_Newsstore_Dummy::$raw_items = [
-      'uri1' => [
-        'uri'       => 'uri1',
-        'title'     => 'changed',
-        'body'      => 'changed',
-        'teaser'    => 'changed',
-        'timestamp' => '2017-01-02',
-      ],
-      'uri2' => [
-        'uri'       => 'uri2',
-        'title'     => 'Title 2',
-        'body'      => 'body 2',
-        'teaser'    => 'teaser 2',
-        'timestamp' => '2017-01-02',
-      ],
-    ];
+    // Do initial fetch with a single item.
+    $vars = $this->createOneDummySourceWithItems('item_a');
+    // time elapses and a new item is now in the source.
+    $this->setDummySourceItemFixtures($vars->uri, 'items_a_and_b');
 
     // Run fetch again.
     $stats = $vars->store->fetch();
@@ -135,7 +113,7 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
     $this->assertEquals('Title 2', $item['title']);
     $this->assertEquals('body 2', $item['body']);
     $this->assertEquals('teaser 2', $item['teaser']);
-    $this->assertEquals('2017-01-02 00:00:00', $item['timestamp']);
+    $this->assertEquals('2017-02-01 00:00:00', $item['timestamp']);
 
     // Run fetch again.
     $stats = $vars->store->fetch();
@@ -148,67 +126,16 @@ class CRM_Newsstore_FetchTest extends \PHPUnit_Framework_TestCase implements Hea
   public function testFetchExistingItemsToNewSource() {
 
     $now = date('Y-m-d H:i:s');
-    $vars = $this->createDummySourceWithOneItem();
-
-    // Create second source fixture.
-    $source_2 = civicrm_api3('NewsStoreSource', 'create', [
-      'sequential' => 1,
-      'name' => 'Second source',
-      'uri' => 'http://example.com/2',
-      'type' => 'Dummy',
-    ]);
-    $source_bao_2 = CRM_Newsstore_BAO_NewsStoreSource::findById($source_2['id']);
-    $store_2 = CRM_Newsstore::factory($source_bao_2);
-    $stats = $store_2->fetch();
+    $vars = $this->createOneDummySourceWithItems();
+    $vars2 = $this->createOneDummySourceWithItems();
 
     // We expect 1 new item (even though it was known to another source, it is new to us), 0 old.
-    $this->assertEquals(['old' => 0, 'new' => 0, 'new_link' => 1], $stats);
+    $this->assertEquals(['old' => 0, 'new' => 0, 'new_link' => 1], $vars2->stats);
 
-    $stats = $store_2->fetch();
+    $stats = $vars2->store->fetch();
     $this->assertEquals(['old' => 1, 'new' => 0, 'new_link' => 0], $stats);
 
   }
 
-  /**
-   * DRY code.
-   */
-  public function createDummySourceWithOneItem() {
-
-    $vars = $this->createDummySourceFixture();
-
-    // Configure dummy news store fixture.
-    CRM_Newsstore_Dummy::$raw_items = [
-      'uri1' => [
-        'uri'       => 'uri1',
-        'title'     => 'Title 1',
-        'body'      => 'body 1',
-        'teaser'    => 'teaser 1',
-        'timestamp' => '2017-01-01',
-      ]
-    ];
-
-    // Get our store and make it fetch items.
-    $vars->stats = $vars->store->fetch();
-
-    return $vars;
-  }
-  /**
-   * DRY code to create source fixture.
-   */
-  public function createDummySourceFixture() {
-
-    // Create source fixture.
-    $source = civicrm_api3('NewsStoreSource', 'create', [
-      'sequential' => 1,
-      'name' => 'Test Feed',
-      'uri' => 'http://example.com',
-      'type' => 'Dummy',
-    ]);
-    $vars = (object) ['source_id' => $source['id']];
-    $vars->source_bao = CRM_Newsstore_BAO_NewsStoreSource::findById($vars->source_id);
-    $vars->store = CRM_Newsstore::factory($vars->source_bao);
-
-    return $vars;
-  }
 }
 
