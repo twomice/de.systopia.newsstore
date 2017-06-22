@@ -98,17 +98,24 @@ class CRM_Newsstore_DAO_NewsStoreItem extends CRM_Core_DAO {
    */
   public $title;
   /**
-   * The main body content of the item.
+   * A HTML-rendered version of the item.
    *
    * @var longtext
    */
-  public $body;
+  public $html;
   /**
    * Short summary of the content.
    *
    * @var longtext
    */
   public $teaser;
+  /**
+   * Optional use: A PHP Serialized object for sources that return structured
+   * data. (Nb. all sources must also return a rendered version.)
+   *
+   * @var longtext
+   */
+  public $object;
   /**
    * Either the date published or the date fetched, if published date missing or not relevant.
    *
@@ -156,17 +163,23 @@ class CRM_Newsstore_DAO_NewsStoreItem extends CRM_Core_DAO {
           'maxlength' => 255,
           'size' => CRM_Utils_Type::HUGE,
         ) ,
-        'body' => array(
-          'name' => 'body',
+        'html' => array(
+          'name' => 'html',
           'type' => CRM_Utils_Type::T_LONGTEXT,
-          'title' => ts('Body') ,
-          'description' => 'The main body content of the item.',
+          'title' => ts('Html') ,
+          'description' => 'A HTML-rendered version of the item.',
         ) ,
         'teaser' => array(
           'name' => 'teaser',
           'type' => CRM_Utils_Type::T_LONGTEXT,
           'title' => ts('Teaser') ,
           'description' => 'Short summary of the content.',
+        ) ,
+        'object' => array(
+          'name' => 'object',
+          'type' => CRM_Utils_Type::T_LONGTEXT,
+          'title' => ts('Object') ,
+          'description' => 'Optional use: A PHP Serialized object for sources that return structured data. (Nb. all sources must also return a rendered version.)',
         ) ,
         'timestamp' => array(
           'name' => 'timestamp',
@@ -191,8 +204,9 @@ class CRM_Newsstore_DAO_NewsStoreItem extends CRM_Core_DAO {
         'id' => 'id',
         'uri' => 'uri',
         'title' => 'title',
-        'body' => 'body',
+        'html' => 'html',
         'teaser' => 'teaser',
+        'object' => 'object',
         'timestamp' => 'timestamp',
       );
     }

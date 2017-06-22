@@ -51,7 +51,7 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
         'uri1' => [
           'uri'       => 'uri1',
           'title'     => 'Title 1',
-          'body'      => 'body 1',
+          'html'      => 'body 1',
           'teaser'    => 'teaser 1',
           'timestamp' => '2017-01-01',
         ]
@@ -63,14 +63,14 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
         'uri1' => [
           'uri'       => 'uri1',
           'title'     => 'Title 1',
-          'body'      => 'body 1',
+          'html'      => 'body 1',
           'teaser'    => 'teaser 1',
           'timestamp' => '2017-01-01',
         ],
         'uri2' => [
           'uri'       => 'uri2',
           'title'     => 'Title 2',
-          'body'      => 'body 2',
+          'html'      => 'body 2',
           'teaser'    => 'teaser 2',
           'timestamp' => '2017-02-01',
         ],
@@ -82,7 +82,7 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
         'uri1' => [
           'uri'       => 'uri1',
           'title'     => 'Title 1',
-          'body'      => 'body 1',
+          'html'      => 'body 1',
           'teaser'    => 'teaser 1',
           'timestamp' => '2017-01-01',
         ],

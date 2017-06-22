@@ -39,7 +39,7 @@ class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
     $item = reset($items);
     $this->assertEquals('uri1', $item['uri']);
     $this->assertEquals('Title 1', $item['title']);
-    $this->assertEquals('body 1', $item['body']);
+    $this->assertEquals('body 1', $item['html']);
     $this->assertEquals('teaser 1', $item['teaser']);
     $this->assertEquals('2017-01-01 00:00:00', $item['timestamp']);
 
@@ -103,7 +103,7 @@ class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
     $item = $items_keyed['uri1'];
     $this->assertEquals('uri1', $item['uri']);
     $this->assertEquals('Title 1', $item['title']);
-    $this->assertEquals('body 1', $item['body']);
+    $this->assertEquals('body 1', $item['html']);
     $this->assertEquals('teaser 1', $item['teaser']);
     $this->assertEquals('2017-01-01 00:00:00', $item['timestamp']);
 
@@ -111,7 +111,7 @@ class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
     $item = $items_keyed['uri2'];
     $this->assertEquals('uri2', $item['uri']);
     $this->assertEquals('Title 2', $item['title']);
-    $this->assertEquals('body 2', $item['body']);
+    $this->assertEquals('body 2', $item['html']);
     $this->assertEquals('teaser 2', $item['teaser']);
     $this->assertEquals('2017-02-01 00:00:00', $item['timestamp']);
 

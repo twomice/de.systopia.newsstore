@@ -36,8 +36,9 @@ CREATE TABLE `civicrm_newsstoreitem` (
      `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique NewsStoreItem ID',
      `uri` varchar(512) NOT NULL   COMMENT 'Unique URI for this news item. Typically a link to a web page.',
      `title` varchar(255) NOT NULL   COMMENT 'Title of item',
-     `body` longtext    COMMENT 'The main body content of the item.',
+     `html` longtext    COMMENT 'A HTML-rendered version of the item.',
      `teaser` longtext    COMMENT 'Short summary of the content.',
+     `object` longtext    COMMENT 'Optional use: A PHP Serialized object for sources that return structured data. (Nb. all sources must also return a rendered version.)',
      `timestamp` timestamp NOT NULL   COMMENT 'Either the date published or the date fetched, if published date missing or not relevant.' 
 ,
     PRIMARY KEY ( `id` )

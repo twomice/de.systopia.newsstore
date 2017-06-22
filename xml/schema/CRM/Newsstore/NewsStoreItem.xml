@@ -35,9 +35,9 @@
   </field>
 
   <field>
-    <name>body</name>
+    <name>html</name>
     <type>longtext</type>
-    <comment>The main body content of the item.</comment>
+    <comment>A HTML-rendered version of the item.</comment>
     <add>4.6</add>
   </field>
 
@@ -45,6 +45,13 @@
     <name>teaser</name>
     <type>longtext</type>
     <comment>Short summary of the content.</comment>
+    <add>4.6</add>
+  </field>
+
+  <field>
+    <name>object</name>
+    <type>longtext</type>
+    <comment>Optional use: A PHP Serialized object for sources that return structured data. (Nb. all sources must also return a rendered version.)</comment>
     <add>4.6</add>
   </field>
 

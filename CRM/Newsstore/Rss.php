@@ -31,7 +31,7 @@ class CRM_Newsstore_Rss extends CRM_Newsstore
       $items[$uri] = [
         'uri' => $uri,
         'title' => (string) $item->title,
-        'body' => (string) $item->description,
+        'html' => (string) $item->description,
         'timestamp'  => date('Y-m-d H:i:s', strtotime((string) $item->pubDate)),
       ];
       // Create teaser.

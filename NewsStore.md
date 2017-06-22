@@ -24,10 +24,10 @@ There should be a new CiviCRM entity called NewsItem with the following attribut
 
  * ``uri``: a string uniquely identifying any news item
  * ``title``: the item's title
- * ``body``: the news item's body encoded in HTML
- * ``timestamp``: date
+ * ``html``: the news item's body encoded in HTML
  * ``teaser``: an abbreviated version of the body, also HTML
- * ``ressources``: an array of URLs used in the body
+ * ``object``: optional serialized() structured data.
+ * ``timestamp``: date
 
 ## NewsSource entity
 
