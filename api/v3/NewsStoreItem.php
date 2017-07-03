@@ -76,20 +76,7 @@ function civicrm_api3_news_store_item_get($params) {
     $require_joins = TRUE;
     $source_sql->where('nsc.newsstoresource_id IN (#source)', ['source' => $params['source']]);
 
-    if (!isset($params['is_consumed'])) {
-      $params['is_consumed'] = 0;
-    }
-
-    // Fix array passed.
-    if (is_array($params['is_consumed'])) {
-      if (count($params['is_consumed']) > 1) {
-        // Rationalise strange use of API!
-        $params['is_consumed'] = 'any';
-      }
-      else {
-        $params['is_consumed'] = reset($params['is_consumed']);
-      }
-    }
+    news_store_item_fix_consumed_api($params);
 
     // Look out for user having selected 2 - be nicer to insist on just one but can't figure out how to specify that.
     if ($params['is_consumed'] !== 'any') {
@@ -128,6 +115,12 @@ function _civicrm_api3_news_store_item_GetWithUsage_spec(&$spec) {
     'description' => 'The ID of the NewsStoreSource that you want items for.',
     'api.required' => 1,
   ];
+  $spec['is_consumed'] = [
+    'description' => 'Whether this item has been consumed or not.',
+    'required' => FALSE,
+    'type' => 2,
+    'options' => ['any' => 'Any', '1' => 'Has been consumed', '0' => 'Has NOT been consumed'],
+  ];
 }
 
 /**
@@ -147,6 +140,42 @@ function civicrm_api3_news_store_item_GetWithUsage($params) {
     throw new API_Exception("Source must be specified as the integer source ID");
   }
 
+  news_store_item_fix_consumed_api($params);
+
   $return_values = CRM_Newsstore_BAO_NewsStoreItem::apiGetWithUsage($params);
   return civicrm_api3_create_success($return_values, $params, 'NewsSourceItem', 'GetWithUsage');
+}
+
+/**
+ * Ensure is_consumed is set in params.
+ *
+ * Shared code.
+ *
+ * @param array &$params API input params.
+ * @param mixed $default_value if missing. Defaults to 0 to find only unconsumed
+ * items. Other options are 1 or 'any'.
+ */
+function news_store_item_fix_consumed_api(&$params, $default_value = 0) {
+
+  if (!isset($params['is_consumed'])) {
+    // Ensure we have a default.
+    $params['is_consumed'] = $default_value;
+  }
+
+  // Fix array passed.
+  if (is_array($params['is_consumed'])) {
+    if (count($params['is_consumed']) > 1) {
+      // Rationalise strange use of API!
+      $params['is_consumed'] = 'any';
+    }
+    else {
+      // Take first.
+      $params['is_consumed'] = reset($params['is_consumed']);
+    }
+  }
+
+  if (!in_array($params['is_consumed'], [0, 1, 'any'])) {
+    throw new InvalidArgumentException("is_consumed must be 0, 1 or 'any'.");
+  }
+
 }

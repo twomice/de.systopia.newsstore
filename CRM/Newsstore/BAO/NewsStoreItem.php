@@ -27,21 +27,30 @@ class CRM_Newsstore_BAO_NewsStoreItem extends CRM_Newsstore_DAO_NewsStoreItem {
    *
    * Used by NewsStoreItem.GetWithUsage action.
    *
-   * @param array $params. Must contain 'source' key which should be a valid source ID integer.
+   * @param array $params. Required keys:
+   * - 'source' valid source ID integer.
+   * - 'is_consumed' 0|1|"any"
+   *
    * @return array
    */
   public static function apiGetWithUsage($params) {
+
     $sql = "
           SELECT nsi.*,
             nsc.id newsstoreconsumed_id,
             nsc.is_consumed
           FROM civicrm_newsstoreitem nsi
-          INNER JOIN civicrm_newsstoreconsumed nsc ON nsi.id = nsc.newsstoreitem_id AND nsc.newsstoresource_id = %1
-          ORDER BY nsi.timestamp DESC;
-      ";
-    $params = [1 => [$params['source'], 'Integer']];
+          INNER JOIN civicrm_newsstoreconsumed nsc ON nsi.id = nsc.newsstoreitem_id AND nsc.newsstoresource_id = %1 "
+        . ($params['is_consumed'] == 'any' ? '' : 'nsc.is_consumed = %2 ')
+        . " ORDER BY nsi.timestamp DESC;";
 
-    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    $sql_params = [1 => [$params['source'], 'Integer']];
+
+    if ($params['is_consumed'] != 'any') {
+      $sql_params[2] = [$params['is_consumed'], 'Integer'];
+    }
+
+    $dao = CRM_Core_DAO::executeQuery($sql, $sql_params);
     $return_values = $dao->fetchAll();
     $dao->free();
     return $return_values;
