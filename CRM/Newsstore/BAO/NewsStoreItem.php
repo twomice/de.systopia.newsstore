@@ -41,7 +41,7 @@ class CRM_Newsstore_BAO_NewsStoreItem extends CRM_Newsstore_DAO_NewsStoreItem {
             nsc.is_consumed
           FROM civicrm_newsstoreitem nsi
           INNER JOIN civicrm_newsstoreconsumed nsc ON nsi.id = nsc.newsstoreitem_id AND nsc.newsstoresource_id = %1 "
-        . ($params['is_consumed'] == 'any' ? '' : 'nsc.is_consumed = %2 ')
+        . ($params['is_consumed'] == 'any' ? '' : 'AND nsc.is_consumed = %2 ')
         . " ORDER BY nsi.timestamp DESC;";
 
     $sql_params = [1 => [$params['source'], 'Integer']];
