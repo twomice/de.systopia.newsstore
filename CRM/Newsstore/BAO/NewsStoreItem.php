@@ -59,4 +59,18 @@ class CRM_Newsstore_BAO_NewsStoreItem extends CRM_Newsstore_DAO_NewsStoreItem {
     return $return_values;
   }
 
+  /**
+   * Delete orphaned items.
+   *
+   * If an item has no consumed records linking it to a source, it's no use to
+   * anyone.
+   */
+  public static function deleteOrphans() {
+    $sql = "
+          DELETE nsi.* FROM civicrm_newsstoreitem nsi
+          LEFT JOIN civicrm_newsstoreconsumed nsc ON nsi.id = nsc.newsstoreitem_id
+          WHERE nsc.id IS NULL;";
+    $dao = CRM_Core_DAO::executeQuery($sql, []);
+    $dao->free();
+  }
 }
