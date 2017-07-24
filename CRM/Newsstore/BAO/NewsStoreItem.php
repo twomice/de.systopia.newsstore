@@ -35,6 +35,9 @@ class CRM_Newsstore_BAO_NewsStoreItem extends CRM_Newsstore_DAO_NewsStoreItem {
    */
   public static function apiGetWithUsage($params) {
 
+    // Ensure we have this declared.
+    $params += ['is_consumed' => 'any'];
+
     $sql = "
           SELECT nsi.*,
             nsc.id newsstoreconsumed_id,
