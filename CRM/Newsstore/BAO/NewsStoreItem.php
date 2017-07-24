@@ -54,7 +54,11 @@ class CRM_Newsstore_BAO_NewsStoreItem extends CRM_Newsstore_DAO_NewsStoreItem {
     }
 
     $dao = CRM_Core_DAO::executeQuery($sql, $sql_params);
-    $return_values = $dao->fetchAll();
+    $return_values = [];
+    while ($dao->fetch()) {
+      $return_values[$dao->id] = $dao->toArray();
+    }
+
     $dao->free();
     return $return_values;
   }
