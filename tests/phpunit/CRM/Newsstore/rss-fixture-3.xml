@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" >
+  <channel>
+    <title>Feed title</title>
+    <link>https://example.com/feed.xml</link>
+    <description></description>
+    <item>
+      <pubDate>Tue, 14 Mar 2017 17:00:00 +0100</pubDate>
+      <title>Demo Title</title>
+      <link>http://example.com/item1</link>
+      <description></description>
+      <contributor>
+        <name>Wilma</name>
+        <name>Fred</name>
+      </contributor>
+    </item>
+  </channel>
+</rss>
+
+
+

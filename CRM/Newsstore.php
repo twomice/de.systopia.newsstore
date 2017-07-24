@@ -10,6 +10,8 @@ abstract class CRM_Newsstore {
   protected $source;
   /**
    * Factory method.
+   *
+   * @param CRM_Newsstore_BAO_NewsStoreSource $newsStoreSource
    */
   public static function factory($newsStoreSource) {
     $class = static::validateClass('CRM_Newsstore_' . $newsStoreSource->type);
@@ -32,6 +34,9 @@ abstract class CRM_Newsstore {
   }
 
   /**
+   * Constructor.
+   *
+   * @param CRM_Newsstore_BAO_NewsStoreSource $newsStoreSource
    */
   public function __construct($newsStoreSource) {
     $this->source = $newsStoreSource;

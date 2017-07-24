@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" xml:base="http://s1490.c64.freistilbox.net/de/feed/mailchimp/%2A" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  <channel>
+    <title>Feed title</title>
+    <link>https://example.com/feed.xml</link>
+    <description></description>
+    <language>de</language>
+    <atom:link href="http://example.com/unsure-what-this-is" rel="self" type="application/rss+xml" />
+    <item>
+      <pubDate>Tue, 14 Mar 2017 17:00:00 +0100</pubDate>
+      <title>Demo Title</title>
+      <link>http://example.com/item1</link>
+      <enclosure url="http://example.com/image1.jpg" type="image/jpg" length="0"/>
+      <source url="http://example.com/image1.jpg">© Copyright notice</source>
+      <content:encoded>Foo | Bar | Baz</content:encoded>
+      <dc:creator>Wilma Flintstone</dc:creator>
+      <description>
+        <![CDATA[
+        <p>Here is the content. <strong>Strong emphasis</strong> &amp; other HTML too.</p>
+        ]]>
+      </description>
+    </item>
+  </channel>
+</rss>
+
