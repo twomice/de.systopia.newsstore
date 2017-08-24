@@ -35,7 +35,8 @@
   </div>
 
   <div id="newsstore-source-edit" ng-show="screen=='source-edit'" >
-    <h1 >{{ ts('News Store Source: %1', {1: nsSource.name || 'Add New' }) }}</h1>
+    <h1 >{{ ts('News Store Source: %1', {1: nsSource.name || 'Add New' }) }} <small ng-show="nsSource.id">[{{nsSource.id}}]</small></h1>
+    
 
     <a href ng-click="screen='sources'" class='button' >« {{ ts('Back to sources list') }}</a><br/>
 
