@@ -4,6 +4,7 @@
  */
 class CRM_Newsstore_Rss extends CRM_Newsstore
 {
+  const PERMITTED_HTML_TAGS= '<br><p><h1><h2><h3><h4><h5><h6><ul><ol><li><dd><dt><dl><hr><embed><object><a><div><table><thead><tbody><tr><th><td><strong><em><b><i><img>';
   /**
    * Namespaces cache.
    */
@@ -51,8 +52,8 @@ class CRM_Newsstore_Rss extends CRM_Newsstore
       $uri = (string) $item->link;
       $items[$uri] = [
         'uri'       => $uri,
-        'title'     => (string) $item->title,
-        'html'      => (string) $item->description,
+        'title'     => (string) strip_tags($item->title),
+        'html'      => (string) strip_tags($item->description, static::PERMITTED_HTML_TAGS),
         'timestamp' => date('Y-m-d H:i:s', strtotime((string) $item->pubDate)),
       ];
 

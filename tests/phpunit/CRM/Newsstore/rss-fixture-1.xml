@@ -16,6 +16,8 @@
       <description>
         <![CDATA[
         <p>Here is the content. <strong>Strong emphasis</strong> &amp; other HTML too.</p>
+        <script>alert("Evil script tags are not allowed");</script>
+        <p>Another paragraph.</p>
         ]]>
       </description>
     </item>

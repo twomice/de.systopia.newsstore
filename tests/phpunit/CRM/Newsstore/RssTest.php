@@ -28,6 +28,13 @@ class CRM_Newsstore_RssTest extends CRM_Newsstore_TestHelper {
     $items    = $rss->parseFeed($file);
 
     $item     = current($items);
+
+    // First check strip_tags is working on html.
+    $this->assertEquals(
+       "<p>Here is the content. <strong>Strong emphasis</strong> &amp; other HTML too.</p>\n"
+      ."        alert(\"Evil script tags are not allowed\");\n"
+      ."        <p>Another paragraph.</p>", trim($item['html']));
+
     $object   = unserialize($item['object']);
     $this->assertEquals([
       'item'                  => '',
@@ -42,7 +49,11 @@ class CRM_Newsstore_RssTest extends CRM_Newsstore_TestHelper {
       'item/source@url'       => 'http://example.com/image1.jpg',
       'item/content:encoded'  => 'Foo | Bar | Baz',
       'item/dc:creator'       => 'Wilma Flintstone',
-      'item/description'      => '<p>Here is the content. <strong>Strong emphasis</strong> &amp; other HTML too.</p>',
+      // Note that strip_tags is NOT called on the object data. This is left to clients.
+      'item/description'      =>
+       "<p>Here is the content. <strong>Strong emphasis</strong> &amp; other HTML too.</p>\n"
+      ."        <script>alert(\"Evil script tags are not allowed\");</script>\n"
+      ."        <p>Another paragraph.</p>",
     ], $object);
   }
   /**
