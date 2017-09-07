@@ -42,7 +42,7 @@ class CRM_Newsstore_BAO_NewsStoreSource extends CRM_Newsstore_DAO_NewsStoreSourc
     }
     if (!empty($params['fetch_frequency'])) {
       $wheres[] = "ns.fetch_frequency = %$i";
-      $sql_params[$i++] = [$params['id'], 'String'];
+      $sql_params[$i++] = [$params['fetch_frequency'], 'String'];
     }
     if ($wheres) {
       $wheres = 'WHERE ' . implode(' AND ', $wheres);
