@@ -34,6 +34,29 @@ abstract class CRM_Newsstore {
   }
 
   /**
+   * Delete items past retention days.
+   *
+   * @return int Number of items deleted.
+   */
+  public static function deleteOldItems() {
+    $sql = "SELECT nsi.id
+        FROM civicrm_newsstoreitem nsi
+        INNER JOIN civicrm_newsstoreconsumed nsc ON nsi.id = nsc.newsstoreitem_id
+        INNER JOIN civicrm_newsstoresource nss ON nsc.newsstoresource_id = nss.id
+        GROUP BY nsi.id
+        HAVING MAX(nsi.timestamp) < CURRENT_DATE - INTERVAL MAX(retention_days) DAY;";
+    $params = [];
+    $items_to_delete = CRM_Core_DAO::executeQuery($sql, [])->fetchMap('id', 'id');
+
+    if ($items_to_delete) {
+      $sql = "DELETE FROM civicrm_newsstoreitem WHERE ID IN ("
+        . implode(',', $items_to_delete)
+        . ")";
+      CRM_Core_DAO::executeQuery($sql, []);
+    }
+    return count($items_to_delete);
+  }
+  /**
    * Constructor.
    *
    * @param CRM_Newsstore_BAO_NewsStoreSource $newsStoreSource
@@ -43,6 +66,8 @@ abstract class CRM_Newsstore {
   }
   /**
    * Fetch items from source.
+   *
+   * Nb. this is also responsible for removing items that are older than the configured number of retention days.
    *
    * @return Array of integer fetched item counts split by key:
    *   - old
@@ -142,6 +167,11 @@ abstract class CRM_Newsstore {
     // Update the last fetched date for the source.
     $this->source->last_fetched = date('Y-m-d H:i:s');
     $this->source->save();
+
+    // Delete old items.
+    // Note that this is a general operation; it will delete old items from any
+    // source not just this one.
+    static::deleteOldItems();
 
     // Return interesting stats.
     return [

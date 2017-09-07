@@ -36,6 +36,18 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
     return $vars;
   }
   /**
+   * Get a date.
+   *
+   * Because the retention_days is relative to the current date, we need the
+   * test data dates to also be relative. Defaults to a week ago.
+   *
+   * @param int $ago Days ago.
+   * @return string 2017-05-02
+   */
+  public function getDate($ago=7) {
+    return date('Y-m-d', strtotime("today - $ago days"));
+  }
+  /**
    * DRY code.
    *
    * @param string $fixture item_a|items_a_and_b|unique_item
@@ -43,6 +55,7 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
    * create multiple things.
    */
   public function setDummySourceItemFixtures($uri, $fixture='item_a') {
+    $recent_date = $this->getDate();
 
     // Configure dummy news store fixture.
     switch ($fixture) {
@@ -53,7 +66,7 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
           'title'     => 'Title 1',
           'html'      => 'body 1',
           'teaser'    => 'teaser 1',
-          'timestamp' => '2017-01-01',
+          'timestamp' => $recent_date,
         ]
       ];
       break;
@@ -65,14 +78,14 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
           'title'     => 'Title 1',
           'html'      => 'body 1',
           'teaser'    => 'teaser 1',
-          'timestamp' => '2017-01-01',
+          'timestamp' => $recent_date,
         ],
         'uri2' => [
           'uri'       => 'uri2',
           'title'     => 'Title 2',
           'html'      => 'body 2',
           'teaser'    => 'teaser 2',
-          'timestamp' => '2017-02-01',
+          'timestamp' => $recent_date,
         ],
       ];
       break;
@@ -84,7 +97,7 @@ class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements He
           'title'     => 'Title 1',
           'html'      => 'body 1',
           'teaser'    => 'teaser 1',
-          'timestamp' => '2017-01-01',
+          'timestamp' => $recent_date,
         ],
       ];
       break;

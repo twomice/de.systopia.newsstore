@@ -41,7 +41,7 @@ class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
     $this->assertEquals('Title 1', $item['title']);
     $this->assertEquals('body 1', $item['html']);
     $this->assertEquals('teaser 1', $item['teaser']);
-    $this->assertEquals('2017-01-01 00:00:00', $item['timestamp']);
+    $this->assertEquals($this->getDate() . ' 00:00:00', $item['timestamp']);
 
     // The NewsStoreSource's last_fetch should be later than or equal to $now.
     $this->assertGreaterThanOrEqual($now, $vars->source_bao->last_fetched);
@@ -105,7 +105,7 @@ class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
     $this->assertEquals('Title 1', $item['title']);
     $this->assertEquals('body 1', $item['html']);
     $this->assertEquals('teaser 1', $item['teaser']);
-    $this->assertEquals('2017-01-01 00:00:00', $item['timestamp']);
+    $this->assertEquals($this->getDate() . ' 00:00:00', $item['timestamp']);
 
     // The new item should have been saved.
     $item = $items_keyed['uri2'];
@@ -113,7 +113,7 @@ class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
     $this->assertEquals('Title 2', $item['title']);
     $this->assertEquals('body 2', $item['html']);
     $this->assertEquals('teaser 2', $item['teaser']);
-    $this->assertEquals('2017-02-01 00:00:00', $item['timestamp']);
+    $this->assertEquals($this->getDate() . ' 00:00:00', $item['timestamp']);
 
     // Run fetch again.
     $stats = $vars->store->fetch();
@@ -136,6 +136,77 @@ class CRM_Newsstore_FetchTest extends CRM_Newsstore_TestHelper
     $this->assertEquals(['old' => 1, 'new' => 0, 'new_link' => 0], $stats);
 
   }
+
+  /**
+   * Test that old items are deleted.
+   *
+   * This is really a test of the SQL and we do everything in here with SQL.
+   */
+  public function testRetentionSimple() {
+
+    $now = date('Y-m-d H:i:s');
+    $this->assertEquals('', $this->fetchAllItemIds());
+
+    // Create stores.
+    CRM_Core_DAO::executeQuery('INSERT INTO civicrm_newsstoresource (id, name, retention_days, uri, type) VALUES
+      (1, "one", 10, "http://one", "dummy"),
+      (2, "two", 20, "http://two", "dummy");', []);
+
+    // Create items.
+    $ancient = $this->getDate(25); // Date older than oldest retention
+    $modern = $this->getDate(15);  // Date older than one retention but younger then the other.
+    $contemporary = $this->getDate(0); // Today is younger than all retentions.
+    CRM_Core_DAO::executeQuery("INSERT INTO civicrm_newsstoreitem (id, title, timestamp, uri) VALUES
+      (1, 'ancient item', '$ancient', 'http://ancient'),
+      (2, 'modern item', '$modern', 'http://modern'),
+      (3, 'contemporary item', '$contemporary', 'http://contemporary');", []);
+
+    // Create Link all items to the first source only. This has a 10 day retention.
+    CRM_Core_DAO::executeQuery("INSERT INTO civicrm_newsstoreconsumed (newsstoreitem_id, newsstoresource_id) VALUES
+      (1, 1), (2, 1), (3,1);", []);
+
+    $deleted = CRM_Newsstore::deleteOldItems();
+    // Should delete the ancient and the modern ones.
+    $this->assertEquals(2, $deleted);
+    $this->assertEquals('3', $this->fetchAllItemIds());
+
+    // Recreate and link the deleted items.
+    CRM_Core_DAO::executeQuery("INSERT INTO civicrm_newsstoreitem (id, title, timestamp, uri) VALUES
+      (1, 'ancient item', '$ancient', 'http://ancient'),
+      (2, 'modern item', '$modern', 'http://modern')
+      ;", []);
+    // Relink them and also link everything to the second feed which has a 20 day retention.
+    CRM_Core_DAO::executeQuery("INSERT INTO civicrm_newsstoreconsumed (newsstoreitem_id, newsstoresource_id) VALUES
+      (1, 1), (2, 1),
+      (1, 2), (2, 2), (3, 2)
+      ;", []);
+    $deleted = CRM_Newsstore::deleteOldItems();
+    // Should delete just the ancient one.
+    $this->assertEquals(1, $deleted);
+    $this->assertEquals('2,3', $this->fetchAllItemIds());
+
+    $deleted = CRM_Newsstore::deleteOldItems();
+    // Should not have deleted anything.
+    $this->assertEquals(0, $deleted);
+    $this->assertEquals('2,3', $this->fetchAllItemIds());
+
+    // Clean up.
+    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_newsstoreitem;', []);
+    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_newsstoresource;', []);
+    CRM_Core_DAO::executeQuery('DELETE FROM civicrm_newsstoreconsumed;', []);
+
+  }
+  /**
+   * DRY code, used in testRetentionSimple.
+   *
+   * Returns ordered list of item ids as a string like "1,2"
+   *
+   * @return string
+   */
+  protected function fetchAllItemIds() {
+    return implode(',', array_values(CRM_Core_DAO::executeQuery("SELECT id FROM civicrm_newsstoreitem ORDER BY id", [])->fetchMap('id', 'id')));
+  }
+
 
 }
 
