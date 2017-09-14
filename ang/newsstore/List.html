@@ -53,6 +53,8 @@
       <div crm-ui-field="{name: 'nsSource.retention_days', title: ts('Retention days')}">
         <select crm-ui-select="{placeholder:'days...', width: '10em', allowClear:false}" ng-model="nsSource.retention_days">
           <option value="30" >30</option>
+          <option value="60" >60</option>
+          <option value="365" >365</option>
         </select>
       </div>
       <div crm-ui-field="{name: 'nsSource.fetch_frequency', title: ts('Fetch Frequency')}">

@@ -158,3 +158,20 @@ function newsstore_civicrm_entityTypes(&$entityTypes) {
     'table' => 'civicrm_newsstoreconsumed',
   ];
 }
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
+ */
+function newsstore_civicrm_navigationMenu(&$menu) {
+  //$parentID =  CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Navigation', 'Contacts', 'id', 'name');
+
+  _importhelper_civix_insert_navigation_menu($menu, 'Administer', array(
+    'label' => ts('NewsStore', array('domain' => 'de.systopia.newsstore')),
+    'name' => 'newsstore',
+    'url' => 'civicrm/a/#newsstore',
+    'permission' => 'access CiviReport',
+    'separator' => 1,
+  ));
+  _importhelper_civix_navigationMenu($menu);
+}
