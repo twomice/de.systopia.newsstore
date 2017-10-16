@@ -4,6 +4,7 @@
 // database as appropriate. For more details, see "hook_civicrm_managed" at:
 // http://wiki.civicrm.org/confluence/display/CRMDOC42/Hook+Reference
 return [
+  /*
   [
     'name' => 'Cron:NewsStoreSource.FetchWeekly',
     'entity' => 'Job',
@@ -17,7 +18,7 @@ return [
       'api_action' => 'Fetch',
       'parameters' => 'fetch_frequency=weekly',
     ],
-  ],
+  ],*/
   [
     'name' => 'Cron:NewsStoreSource.FetchDaily',
     'entity' => 'Job',
