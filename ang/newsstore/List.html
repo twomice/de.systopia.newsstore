@@ -98,12 +98,16 @@
         <tr ng-repeat-end ng-if="itemSelected && (itemSelected.id == row.id)" >
           <td colspan=4 style="background-color:#eee;">
             <h3>Teaser</h3>
-            <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;">
+            <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;max-width:100%;">
               {{ itemSelected.teaser }}
             </div>
             <h3>Body</h3>
-            <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;">
+            <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;max-width:100%;">
               {{ itemSelected.html }}
+            </div>
+            <h3>Object</h3>
+            <div style="overflow:auto; background-color:white; border:solid 1px #ddd;padding:0.5em 1em;max-height:60vh;max-width:100%;white-space:pre;font-family:monospaced,mono;">
+              {{ itemSelected.object |json }}
             </div>
           </td>
         </tr>

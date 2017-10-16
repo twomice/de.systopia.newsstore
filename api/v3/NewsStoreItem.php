@@ -100,7 +100,13 @@ function civicrm_api3_news_store_item_get($params) {
   // There does not seem to be a way to do this without writing an entirely custom getter.
   //$query->selects('nsc.is_consumed', 'is_consumed');
 
-  return _civicrm_api3_basic_get($bao_name, $params, TRUE, "", $source_sql);
+  $results = _civicrm_api3_basic_get($bao_name, $params, TRUE, "", $source_sql);
+  foreach ($results['values'] as &$row) {
+    if (!empty($row['object'])) {
+      $row['object'] = unserialize($row['object']);
+    }
+  }
+  return $results;
 }
 /**
  * NewsStoreItem.GetWithUsage API specification (optional)

@@ -57,6 +57,10 @@ class CRM_Newsstore_BAO_NewsStoreItem extends CRM_Newsstore_DAO_NewsStoreItem {
     $return_values = [];
     while ($dao->fetch()) {
       $return_values[$dao->id] = $dao->toArray();
+      if (!empty($return_values[$dao->id]['object'])) {
+        // Unserialize the object.
+        $return_values[$dao->id]['object'] = unserialize($return_values[$dao->id]['object']);
+      }
     }
 
     $dao->free();
