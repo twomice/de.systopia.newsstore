@@ -4,7 +4,7 @@ use Civi\Test\HeadlessInterface;
 use Civi\Test\HookInterface;
 use Civi\Test\TransactionalInterface;
 
-class CRM_Newsstore_TestHelper extends \PHPUnit_Framework_TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class CRM_Newsstore_TestHelper extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
 
   /**
    * counter for unique source fixtures.

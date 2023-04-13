@@ -18,11 +18,21 @@
   <version>0.2.3</version>
   <develStage>beta</develStage>
   <compatibility>
-    <ver>4.6</ver>
-    <ver>4.7</ver>
+    <ver>5.45</ver>
   </compatibility>
   <comments>Written by Rich Lott / Artful Robot on behalf of Systopia.</comments>
   <civix>
     <namespace>CRM/Newsstore</namespace>
+    <format>23.02.1</format>
   </civix>
+  <mixins>
+    <mixin>ang-php@1.0.0</mixin>
+    <mixin>mgd-php@1.0.0</mixin>
+    <mixin>entity-types-php@1.0.0</mixin>
+  </mixins>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
+  <upgrader>CRM_Newsstore_Upgrader</upgrader>
 </extension>
